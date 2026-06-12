@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useIsMobile } from "./ui/use-mobile";
 import { SkBar, SkImg, Annotation, WfBtn, SectionDivider } from "./WireframeHelpers";
 
 interface ProductPageProps {
@@ -7,6 +8,7 @@ interface ProductPageProps {
 }
 
 export default function ProductPage({ onBack, onAddToCart }: ProductPageProps) {
+  const isMobile = useIsMobile();
   const [activeAccordion, setActiveAccordion] = useState<string>("details");
   const [activeImage, setActiveImage] = useState(0);
 
@@ -21,7 +23,7 @@ export default function ProductPage({ onBack, onAddToCart }: ProductPageProps) {
   return (
     <div style={{ background: "#fff" }}>
       {/* ═══ BREADCRUMB ═══════════════════════════════════════════════════════ */}
-      <div style={{ padding: "24px 80px", borderBottom: "1.5px solid #EBEBEB", display: "flex", gap: 8, alignItems: "center", fontSize: 9, color: "#AAA", letterSpacing: "0.15em" }}>
+      <div style={{ padding: isMobile ? "16px 20px" : "24px 80px", borderBottom: "1.5px solid #EBEBEB", display: "flex", gap: 8, alignItems: "center", fontSize: 9, color: "#AAA", letterSpacing: "0.15em", overflowX: "auto", whiteSpace: "nowrap" }}>
         <span onClick={onBack} style={{ cursor: "pointer" }}>Home</span>
         <span>/</span>
         <span onClick={onBack} style={{ cursor: "pointer" }}>Collections</span>
@@ -32,17 +34,17 @@ export default function ProductPage({ onBack, onAddToCart }: ProductPageProps) {
       </div>
 
       {/* ═══ PRODUCT MAIN SECTION ═══════════════════════════════════════════════ */}
-      <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", minHeight: "85vh" }}>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1.2fr 1fr", minHeight: "85vh" }}>
         
         {/* ── LEFT: IMAGE GALLERY (Interactive) ───────────────────────────── */}
-        <div style={{ background: "#F9F9F9", borderRight: "1.5px solid #EBEBEB", position: "relative" }}>
-          <div style={{ position: "sticky", top: 120, padding: "0 60px", display: "flex", gap: 24 }}>
-            <div style={{ position: "absolute", top: -16, left: 24, zIndex: 10 }}>
+        <div style={{ background: "#F9F9F9", borderRight: isMobile ? "none" : "1.5px solid #EBEBEB", borderBottom: isMobile ? "1.5px solid #EBEBEB" : "none", position: "relative" }}>
+          <div style={{ position: isMobile ? "relative" : "sticky", top: isMobile ? 0 : 120, padding: isMobile ? "20px" : "0 60px", display: "flex", flexDirection: isMobile ? "column-reverse" : "row", gap: 24 }}>
+            <div style={{ position: "absolute", top: isMobile ? 12 : -16, left: isMobile ? 12 : 24, zIndex: 10 }}>
               <Annotation n="A" label="Interactive Product Gallery" />
             </div>
 
-            {/* Thumbnails (Vertical Strip) */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 40, width: 80, flexShrink: 0 }}>
+            {/* Thumbnails */}
+            <div style={{ display: "flex", flexDirection: isMobile ? "row" : "column", gap: 12, marginTop: isMobile ? 0 : 40, width: isMobile ? "100%" : 80, overflowX: isMobile ? "auto" : "visible", flexShrink: 0 }}>
             {galleryImages.map((imgLabel, idx) => (
               <div 
                 key={idx}
@@ -59,8 +61,8 @@ export default function ProductPage({ onBack, onAddToCart }: ProductPageProps) {
             ))}
           </div>
 
-          {/* Main Image */}
-          <div style={{ flex: 1, position: "relative", display: "flex", alignItems: "flex-start", justifyContent: "center" }}>
+          {/* Main Image Viewport */}
+          <div style={{ flex: 1, position: "relative", display: "flex", justifyContent: "center", alignItems: "center" }}>
             <SkImg label={galleryImages[activeImage]} style={{ width: "100%", height: "auto", aspectRatio: "3/4", objectFit: "cover" }} />
             
             {/* Arrows */}
@@ -83,7 +85,7 @@ export default function ProductPage({ onBack, onAddToCart }: ProductPageProps) {
       </div>
 
       {/* ── RIGHT: PRODUCT INFO (Sticky) ──────────────────────────────────── */}
-      <div style={{ padding: "48px 64px" }}>
+      <div style={{ padding: isMobile ? "32px 20px" : "48px 64px" }}>
         <div style={{ position: "sticky", top: 120 }}>
             <Annotation n="B" label="Product Details & Purchasing" />
             

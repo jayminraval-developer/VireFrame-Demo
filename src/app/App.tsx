@@ -1,12 +1,15 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import AllCollectionsPage from "./components/AllCollectionsPage";
 import SingleCollectionPage from "./components/SingleCollectionPage";
+import AccessoriesPage from "./components/AccessoriesPage";
+import ArchivePage from "./components/ArchivePage";
 import ProductPage from "./components/ProductPage";
 import CartDrawer from "./components/CartDrawer";
 import { SkBar, SkImg, Annotation, WfBtn } from "./components/WireframeHelpers";
+import { useIsMobile } from "./components/ui/use-mobile";
 
 /* ─── NAV ITEMS ─────────────────────────────────────────────────────────────── */
-const NAV_LINKS = ["Women", "Men", "Home Decor", "Atelier", "Archive", "Journal"];
+const NAV_LINKS = ["Women", "Men", "Home Decor", "Atelier", "Archive", "Accessories"];
 
 const NAV_CATEGORIES: Record<string, { label: string; links: string[] }[]> = {
   Women: [
@@ -30,19 +33,19 @@ const NAV_CATEGORIES: Record<string, { label: string; links: string[] }[]> = {
     { label: "Experiences", links: ["Studio Tour", "Karigar Meet", "Heritage Workshops", "Archive Access", "Gift Experiences"] },
   ],
   Archive: [
-    { label: "Milestones", links: ["2014 — Foundation", "2016 — Mr India", "2018 — Lakme Debut", "2020 — Couture Salon", "2024 — Museum Project"] },
+    { label: "Milestones", links: ["2014 — Foundation", "2016 — First Atelier", "2018 — Lakme Debut", "2020 — Couture Salon", "2024 — Museum Project"] },
     { label: "Editorials", links: ["Heritage Lookbooks", "Runway Collections", "Press Features", "Artisan Journals", "Campaign Films"] },
     { label: "Rare Pieces", links: ["Archive Pieces", "One-of-One Items", "Vintage Textiles", "Collector's Editions", "Heirloom Finds"] },
   ],
-  Journal: [
-    { label: "Stories", links: ["Artisan Features", "Karigar Diaries", "Fabric Origins", "Design Process", "Brand Essays"] },
-    { label: "Style Guides", links: ["Wedding Planning", "Groom's Checklist", "How to Drape a Sari", "Fabric Care", "Occasion Dressing"] },
-    { label: "Media", links: ["Short Films", "Studio Reels", "Behind the Seams", "Press & Media", "Events"] },
+  Accessories: [
+    { label: "Women's Accessories", links: ["Potlis & Clutches", "Handwoven Dupattas", "Fine Jewellery", "Bridal Belts", "Juttis & Mojaris"] },
+    { label: "Men's Accessories", links: ["Safas & Pagris", "Brooches & Kalgi", "Heritage Shawls", "Stoles", "Embroidered Mojaris"] },
+    { label: "Discover", links: ["New Arrivals", "The Wedding Edit", "Studio Exclusives", "Last Pieces", "Gifting"] },
   ],
 };
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
-type Page = "home" | "collections" | "collection" | "product";
+type Page = "home" | "collections" | "collection" | "product" | "accessories" | "archive";
 
 export default function App() {
   const [page, setPage] = useState<Page>("home");
@@ -55,9 +58,21 @@ export default function App() {
   const [announcementIndex, setAnnouncementIndex] = useState(0);
   const [activeMilestone, setActiveMilestone] = useState<number | null>(null);
 
+  const isMobile = useIsMobile();
+
   const goHome = () => { setPage("home"); window.scrollTo(0,0); };
   const goCollections = () => { setPage("collections"); window.scrollTo(0,0); };
-  const goCollection = (id: string) => { setActiveCollection(id); setPage("collection"); window.scrollTo(0,0); };
+  const goCollection = (id: string) => { 
+    if (id === "accessories") {
+      setPage("accessories");
+    } else if (id === "archive") {
+      setPage("archive");
+    } else {
+      setActiveCollection(id); 
+      setPage("collection"); 
+    }
+    window.scrollTo(0,0); 
+  };
   const goProduct = () => { setPage("product"); window.scrollTo(0,0); };
   const navTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -100,19 +115,19 @@ export default function App() {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        padding: "0 48px",
-        fontSize: 10,
+        padding: isMobile ? "0 20px" : "0 48px",
+        fontSize: isMobile ? 8 : 10,
         letterSpacing: "0.22em",
         textTransform: "uppercase",
         borderBottom: "1px dashed #444",
         position: "relative",
       }}>
-        <div style={{ position: "absolute", left: 8, top: "50%", transform: "translateY(-50%)" }}>
+        <div style={{ position: "absolute", left: isMobile ? 12 : 8, top: "50%", transform: "translateY(-50%)" }}>
           <span className="wf-section-tag" style={{ background: "transparent", color: "#888", borderColor: "#555", fontSize: 8 }}>
-            01 — ANNOUNCEMENT BAR
+            {!isMobile && "01 — "}ANNOUNCEMENT
           </span>
         </div>
-        <div style={{ flex: 1, textAlign: "center" }}>{announcements[announcementIndex]}</div>
+        <div style={{ flex: 1, textAlign: isMobile ? "right" : "center" }}>{announcements[announcementIndex]}</div>
       </div>
 
       {/* ─── OUTER WRAPPER ──────────────────────────────────────────────────────── */}
@@ -123,15 +138,23 @@ export default function App() {
           style={{ position: "sticky", top: 0, background: "#fff", borderBottom: "1.5px solid #DEDEDE", zIndex: 100 }}
           onMouseLeave={closeNav}
         >
-          <div style={{ height: 72, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 80px" }}>
+          <div style={{ height: 72, display: "flex", alignItems: "center", justifyContent: "space-between", padding: isMobile ? "0 20px" : "0 80px" }}>
+
+            {/* Mobile Hamburger (Only visible on mobile) */}
+            {isMobile && (
+              <button onClick={() => setMobileOpen(!mobileOpen)} style={{ background: "transparent", border: "none", fontSize: 24, cursor: "pointer", color: "#222" }}>
+                ☰
+              </button>
+            )}
 
             {/* Logo block */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 3, alignItems: isMobile ? "center" : "flex-start" }}>
               <div className="wf-bar-xl" style={{ width: 180, background: "#CCC" }} />
               <div className="wf-bar-sm" style={{ width: 120, background: "#E0E0E0" }} />
             </div>
 
             {/* Desktop Nav links */}
+            {!isMobile && (
             <nav style={{ display: "flex", alignItems: "center", gap: 32 }}>
               {/* Home */}
               <button
@@ -152,9 +175,9 @@ export default function App() {
                 style={{
                   background: "none", border: "none", cursor: "pointer",
                   fontSize: 10, fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase",
-                  color: page === "collections" || page === "collection" ? "#222" : "#888",
+                  color: page === "collections" || page === "collection" || page === "accessories" || page === "archive" ? "#222" : "#888",
                   padding: "8px 0", fontFamily: "Inter, sans-serif",
-                  borderBottom: page === "collections" || page === "collection" ? "2px solid #333" : "2px solid transparent",
+                  borderBottom: page === "collections" || page === "collection" || page === "accessories" || page === "archive" ? "2px solid #333" : "2px solid transparent",
                   transition: "all 0.2s",
                 }}
               >Collections</button>
@@ -179,9 +202,10 @@ export default function App() {
                 </button>
               ))}
             </nav>
+            )}
 
             {/* Icons row */}
-            <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: isMobile ? 12 : 20 }}>
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3 }}>
                 <div style={{ width: 20, height: 20, background: "#E4E4E4", borderRadius: 3 }} />
                 <span style={{ fontSize: 7, color: "#AAA", letterSpacing: "0.1em", textTransform: "uppercase" }}>Search</span>
@@ -242,8 +266,17 @@ export default function App() {
           <AllCollectionsPage onSelectCollection={goCollection} />
         )}
 
+        {/* ── ARCHIVE PAGE ──────────────────────────────────────────────────── */}
+        {page === "archive" && (
+          <ArchivePage />
+        )}
+
         {/* ── SINGLE COLLECTION PAGE ─────────────────────────────────────────── */}
-        {page === "collection" && (
+        {page === "accessories" && (
+        <AccessoriesPage onSelectProduct={goProduct} />
+      )}
+
+      {page === "collection" && (
           <SingleCollectionPage
             collectionId={activeCollection}
             onBack={goHome}

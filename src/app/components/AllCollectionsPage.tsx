@@ -1,4 +1,5 @@
 import React from "react";
+import { useIsMobile } from "./ui/use-mobile";
 import { SkBar, SkImg, Annotation, WfBtn, SectionDivider } from "./WireframeHelpers";
 
 /* ─── Collection category data ─────────────────────────────────────────────── */
@@ -73,8 +74,11 @@ interface AllCollectionsPageProps {
   onSelectCollection: (id: string) => void;
 }
 
-export default function AllCollectionsPage({ onSelectCollection }: AllCollectionsPageProps) {
-  const [activeFilter, setActiveFilter] = React.useState("All");
+export default function AllCollectionsPage({
+  onSelectCollection,
+}: AllCollectionsPageProps) {
+  const isMobile = useIsMobile();
+  const [activeFilter, setActiveFilter] = React.useState("All Categories");
   const filters = ["All", "New Season", "Home Decor", "Couture", "Archive", "Bestsellers"];
 
   return (
@@ -82,13 +86,7 @@ export default function AllCollectionsPage({ onSelectCollection }: AllCollection
       {/* ═══ PAGE HERO ══════════════════════════════════════════════════════════ */}
       <div style={{ position: "relative" }}>
         <SkImg label="Collections Hero Banner (1440 × 320)" style={{ width: "100%", height: 320 }}>
-          <div
-            style={{
-              position: "absolute", inset: 0, display: "flex", flexDirection: "column",
-              alignItems: "center", justifyContent: "center", gap: 14, zIndex: 2,
-              background: "rgba(255,255,255,0.82)",
-            }}
-          >
+          <div style={{ position: "absolute", inset: 0, zIndex: 2, background: "rgba(0,0,0,0.50)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16, padding: isMobile ? "0 20px" : "0 80px", textAlign: "center" }}>
             <Annotation n="A" label="All Collections — Hero Banner" />
             <SkBar w={160} h={9} />
             <SkBar w={340} h={28} dark />
@@ -103,11 +101,11 @@ export default function AllCollectionsPage({ onSelectCollection }: AllCollection
 
       {/* ═══ FILTER / SORT BAR ══════════════════════════════════════════════════ */}
       <div style={{
-        background: "#fff", borderBottom: "1.5px solid #EBEBEB", padding: "0 80px",
+        background: "#fff", borderBottom: "1.5px solid #EBEBEB", padding: isMobile ? "12px 20px" : "0 80px",
         display: "flex", alignItems: "center", justifyContent: "space-between",
-        height: 56, position: "sticky", top: 72, zIndex: 40,
+        minHeight: 56, position: "sticky", top: 72, zIndex: 40, flexWrap: "wrap", gap: 12
       }}>
-        <div style={{ display: "flex", gap: 4 }}>
+        <div style={{ display: "flex", gap: 4, overflowX: "auto", whiteSpace: "nowrap" }}>
           {filters.map((f) => (
             <button key={f} onClick={() => setActiveFilter(f)} style={{
               border: "none", background: activeFilter === f ? "#222" : "transparent",
@@ -124,14 +122,14 @@ export default function AllCollectionsPage({ onSelectCollection }: AllCollection
       </div>
 
       {/* ═══ COLLECTION GRID ════════════════════════════════════════════════════ */}
-      <div style={{ padding: "48px 80px", background: "#F7F7F7" }}>
+      <div style={{ padding: isMobile ? "32px 20px" : "48px 80px", background: "#F7F7F7" }}>
         <Annotation n="B" label="Collection Category Cards — Overview Grid" />
 
         {/* ── Row 1: Women (featured, large) ──────────────────────────────────── */}
         <div className="wf-card" onClick={() => onSelectCollection("women")}
-          style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", marginBottom: 24, overflow: "hidden", cursor: "pointer" }}>
-          <SkImg label="Women Collection — Feature Image (Large)" style={{ height: 480 }} />
-          <div style={{ padding: "48px 44px", display: "flex", flexDirection: "column", justifyContent: "space-between", background: "#fff", borderLeft: "1.5px dashed #D4D4D4" }}>
+          style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1.4fr 1fr", marginBottom: 24, overflow: "hidden", cursor: "pointer" }}>
+          <SkImg label="Women Collection — Feature Image (Large)" style={{ height: isMobile ? 320 : 480 }} />
+          <div style={{ padding: isMobile ? "24px 20px" : "48px 44px", display: "flex", flexDirection: "column", justifyContent: "space-between", background: "#fff", borderLeft: isMobile ? "none" : "1.5px dashed #D4D4D4", borderTop: isMobile ? "1.5px dashed #D4D4D4" : "none" }}>
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                 <span className="wf-tag">NEW SEASON</span>
@@ -158,7 +156,7 @@ export default function AllCollectionsPage({ onSelectCollection }: AllCollection
         </div>
 
         {/* ── Row 2: Men + Home Decor (equal split, featured) ─────────────────── */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 24 }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 20, marginBottom: 24 }}>
 
           {/* Men */}
           <div className="wf-card" onClick={() => onSelectCollection("men")}
@@ -225,7 +223,7 @@ export default function AllCollectionsPage({ onSelectCollection }: AllCollection
         </div>
 
         {/* ── Row 3: Prêt + Accessories ────────────────────────────────────────── */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 24 }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 20, marginBottom: 24 }}>
           {COLLECTION_CATEGORIES.slice(3, 5).map((col) => (
             <div key={col.id} className="wf-card" onClick={() => onSelectCollection(col.id)}
               style={{ display: "flex", flexDirection: "column", overflow: "hidden", cursor: "pointer" }}>
@@ -252,10 +250,10 @@ export default function AllCollectionsPage({ onSelectCollection }: AllCollection
           ))}
         </div>
 
-        {/* ── Archive — dark full-width ─────────────────────────────────────────── */}
+        {/* ── Final Row: Archive (Featured landscape) ──────────────────────────── */}
         <div className="wf-card" onClick={() => onSelectCollection("archive")}
-          style={{ display: "grid", gridTemplateColumns: "1fr 2fr", overflow: "hidden", cursor: "pointer" }}>
-          <div style={{ padding: "40px 36px", background: "#222", display: "flex", flexDirection: "column", justifyContent: "center", gap: 16 }}>
+          style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 2fr", overflow: "hidden", cursor: "pointer" }}>
+          <div style={{ padding: isMobile ? "24px 20px" : "40px 36px", background: "#222", display: "flex", flexDirection: "column", justifyContent: "center", gap: 16 }}>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               <span className="wf-tag" style={{ borderColor: "#555", color: "#888", background: "transparent" }}>ARCHIVE · HERITAGE</span>
               <SkBar w="80%" h={22} /><SkBar w="95%" h={22} />
@@ -270,12 +268,12 @@ export default function AllCollectionsPage({ onSelectCollection }: AllCollection
       </div>
 
       {/* ═══ HOME DECOR SHOWCASE STRIP ══════════════════════════════════════════ */}
-      <div style={{ padding: "56px 80px", background: "#fff", borderTop: "1.5px dashed #DDD" }}>
+      <div style={{ padding: isMobile ? "32px 20px" : "56px 80px", background: "#fff", borderTop: "1.5px dashed #DDD" }}>
         <Annotation n="C" label="Home Decor — Studio Showcase (Special Section)" />
         <SectionDivider label="The Living Edit — Studio Virtues at Home" />
 
         {/* Top: descriptive intro */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 48, marginBottom: 36 }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 2fr", gap: isMobile ? 24 : 48, marginBottom: 36 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             <SkBar w="80%" h={18} dark />
             <SkBar w="60%" h={9} />
@@ -288,7 +286,7 @@ export default function AllCollectionsPage({ onSelectCollection }: AllCollection
             </WfBtn>
           </div>
           {/* Room category quick-links */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 12 }}>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(3, 1fr)" : "repeat(6, 1fr)", gap: 12 }}>
             {ROOM_CATEGORIES.map(room => (
               <div key={room.label} className="wf-card" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10, padding: "20px 10px", cursor: "pointer" }}
                 onClick={() => onSelectCollection("home-decor")}>
@@ -302,7 +300,7 @@ export default function AllCollectionsPage({ onSelectCollection }: AllCollection
         </div>
 
         {/* Product carousel: 4 home decor items */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : "repeat(4, 1fr)", gap: 16 }}>
           {[
             { label: "Cushion — Zardozi Embellished", tag: "NEW IN" },
             { label: "Table Runner — Block Print Silk", tag: "BESTSELLER" },
@@ -328,10 +326,10 @@ export default function AllCollectionsPage({ onSelectCollection }: AllCollection
       </div>
 
       {/* ═══ FEATURED EDITORIAL STRIP ═══════════════════════════════════════════ */}
-      <div style={{ padding: "48px 80px", background: "#F7F7F7", borderTop: "1.5px dashed #DDD" }}>
+      <div style={{ padding: isMobile ? "32px 20px" : "48px 80px", background: "#F7F7F7", borderTop: "1.5px dashed #DDD" }}>
         <Annotation n="D" label="Featured Editorial Collections Strip" />
         <SectionDivider label="Current Season Highlights" />
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: 20 }}>
           {["Couture '25 Women's Edit", "The Groom's Chapter", "The Living Edit — Home Decor"].map((title, i) => (
             <div key={i} className="wf-card" style={{ overflow: "hidden" }}>
               <SkImg label={`Editorial ${i + 1}`} style={{ height: 300 }} />
@@ -350,14 +348,14 @@ export default function AllCollectionsPage({ onSelectCollection }: AllCollection
       </div>
 
       {/* ═══ NEWSLETTER STRIP ═══════════════════════════════════════════════════ */}
-      <div style={{ background: "#222", padding: "40px 80px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 40 }}>
+      <div style={{ background: "#222", padding: isMobile ? "32px 20px" : "40px 80px", display: "flex", flexDirection: isMobile ? "column" : "row", justifyContent: "space-between", alignItems: isMobile ? "flex-start" : "center", gap: isMobile ? 24 : 40 }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <SkBar w={280} h={18} />
           <SkBar w={320} h={9} />
         </div>
-        <div style={{ display: "flex", gap: 0, border: "1.5px solid #555", overflow: "hidden", flexShrink: 0 }}>
+        <div style={{ display: "flex", gap: 0, border: "1.5px solid #555", overflow: "hidden", flexShrink: 0, width: isMobile ? "100%" : "auto" }}>
           <input className="wf-input" placeholder="Your email address"
-            style={{ width: 280, border: "none", height: 44, background: "#333", color: "#AAA" }} />
+            style={{ width: isMobile ? "100%" : 280, border: "none", height: 44, background: "#333", color: "#AAA" }} />
           <WfBtn solid style={{ height: 44, borderRadius: 0, fontSize: 9 }}>Subscribe</WfBtn>
         </div>
       </div>

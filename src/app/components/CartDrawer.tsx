@@ -1,4 +1,5 @@
 import React from "react";
+import { useIsMobile } from "./ui/use-mobile";
 import { SkBar, SkImg, WfBtn } from "./WireframeHelpers";
 
 interface CartDrawerProps {
@@ -7,6 +8,8 @@ interface CartDrawerProps {
 }
 
 export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
+  const isMobile = useIsMobile();
+
   if (!isOpen) return null;
 
   return (
@@ -30,7 +33,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
           top: 0,
           right: 0,
           bottom: 0,
-          width: 480,
+          width: isMobile ? "100%" : 480,
           background: "#fff",
           zIndex: 1000,
           boxShadow: "-4px 0 24px rgba(0,0,0,0.1)",
@@ -49,13 +52,13 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         </style>
 
         {/* Header */}
-        <div style={{ padding: "32px 40px", borderBottom: "1.5px solid #EBEBEB", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ padding: isMobile ? "24px 20px" : "32px 40px", borderBottom: "1.5px solid #EBEBEB", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <span style={{ fontSize: 14, fontWeight: 600, letterSpacing: "0.15em", textTransform: "uppercase" }}>Your Bag (2)</span>
           <button onClick={onClose} style={{ background: "transparent", border: "none", fontSize: 24, cursor: "pointer", color: "#888" }}>×</button>
         </div>
 
         {/* Cart Items (Scrollable) */}
-        <div style={{ flex: 1, overflowY: "auto", padding: "32px 40px", display: "flex", flexDirection: "column", gap: 32 }}>
+        <div style={{ flex: 1, overflowY: "auto", padding: isMobile ? "24px 20px" : "32px 40px", display: "flex", flexDirection: "column", gap: 32 }}>
           {/* Item 1 */}
           <div style={{ display: "flex", gap: 20 }}>
             <SkImg label="Product Image" style={{ width: 100, height: 130, flexShrink: 0 }} />
@@ -100,7 +103,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         </div>
 
         {/* Footer / Summary */}
-        <div style={{ padding: "32px 40px", background: "#F9F9F9", borderTop: "1.5px solid #EBEBEB", display: "flex", flexDirection: "column", gap: 20 }}>
+        <div style={{ padding: isMobile ? "24px 20px" : "32px 40px", background: "#F9F9F9", borderTop: "1.5px solid #EBEBEB", display: "flex", flexDirection: "column", gap: 20 }}>
           <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, color: "#666" }}>
             <span>Subtotal</span>
             <span>INR 1,45,000</span>

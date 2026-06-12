@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useIsMobile } from "./ui/use-mobile";
 import { SkBar, SkImg, Annotation, WfBtn, SectionDivider } from "./WireframeHelpers";
 
 /* ─── Per-collection metadata ────────────────────────────────────────────────── */
@@ -85,7 +86,7 @@ const COLLECTION_META: Record<
     badge: "ARCHIVE",
     totalItems: 28,
     filterGroups: [
-      { label: "Season", options: ["All Seasons", "2014 — Foundation", "2016 — Mr India", "2018 — Lakme", "2020 — Couture", "2024 — Museum"] },
+      { label: "Season", options: ["All Seasons", "2014 — Foundation", "2016 — First Atelier", "2018 — Lakme", "2020 — Couture", "2024 — Museum"] },
       { label: "Piece Type", options: ["All", "One-of-One", "Vintage Textile", "Collector's Edition", "Runway Piece", "Heirloom Find"] },
       { label: "Craft", options: ["All", "Zardozi", "Hand-Woven", "Block Print", "Heritage Embroidery"] },
       { label: "Sort By", options: ["Archive Date", "Rarest First", "Price: Low–High", "Price: High–Low"] },
@@ -108,6 +109,7 @@ export default function SingleCollectionPage({
   onGoToAllCollections,
   onProductClick,
 }: SingleCollectionPageProps) {
+  const isMobile = useIsMobile();
   const meta = COLLECTION_META[collectionId] ?? COLLECTION_META["women"];
   const [activeFilters, setActiveFilters] = useState<Record<string, string>>({});
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
@@ -135,7 +137,7 @@ export default function SingleCollectionPage({
               alignItems: "center",
               justifyContent: "center",
               gap: 14,
-              padding: "0 80px",
+              padding: isMobile ? "0 20px" : "0 80px",
               textAlign: "center",
             }}
           >
@@ -170,12 +172,14 @@ export default function SingleCollectionPage({
         {/* Sub-category tabs */}
         <div
           style={{
-            padding: "0 80px",
+            padding: isMobile ? "0 20px" : "0 80px",
             height: 48,
             display: "flex",
             alignItems: "center",
             gap: 4,
             borderBottom: "1px solid #F0F0F0",
+            overflowX: "auto",
+            whiteSpace: "nowrap"
           }}
         >
           {subTabs.map((tab) => (
@@ -207,11 +211,12 @@ export default function SingleCollectionPage({
         {/* Filter dropdowns + sort + view toggle */}
         <div
           style={{
-            padding: "0 80px",
-            height: 52,
+            padding: isMobile ? "12px 20px" : "0 80px",
+            minHeight: 52,
             display: "flex",
             alignItems: "center",
             gap: 16,
+            flexWrap: "wrap"
           }}
         >
           <span style={{ fontSize: 9, color: "#BBB", letterSpacing: "0.15em", fontWeight: 600, textTransform: "uppercase", marginRight: 4 }}>Filter:</span>
@@ -270,7 +275,7 @@ export default function SingleCollectionPage({
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "240px 1fr",
+          gridTemplateColumns: isMobile ? "1fr" : "240px 1fr",
           background: "#F7F7F7",
           minHeight: 900,
         }}
@@ -279,8 +284,9 @@ export default function SingleCollectionPage({
         <aside
           style={{
             background: "#fff",
-            borderRight: "1.5px solid #EBEBEB",
-            padding: "32px 24px",
+            borderRight: isMobile ? "none" : "1.5px solid #EBEBEB",
+            borderBottom: isMobile ? "1.5px solid #EBEBEB" : "none",
+            padding: isMobile ? "24px 20px" : "32px 24px",
             display: "flex",
             flexDirection: "column",
             gap: 28,
@@ -354,7 +360,7 @@ export default function SingleCollectionPage({
         </aside>
 
         {/* ── PRODUCT GRID ───────────────────────────────────────────────────── */}
-        <div style={{ padding: "32px 40px" }}>
+        <div style={{ padding: isMobile ? "24px 20px" : "32px 40px" }}>
           <Annotation n="C" label="Product Grid — Filtered Results" />
 
           {/* Results count + active filter chips */}
@@ -406,7 +412,7 @@ export default function SingleCollectionPage({
 
           {/* Grid or List view */}
           {viewMode === "grid" ? (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : "repeat(3, 1fr)", gap: isMobile ? 12 : 20 }}>
               {Array.from({ length: 12 }).map((_, i) => (
                 <div key={i} className="wf-card" onClick={onProductClick} style={{ display: "flex", flexDirection: "column", cursor: "pointer" }}>
                   <div style={{ position: "relative" }}>
